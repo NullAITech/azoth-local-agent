@@ -1,0 +1,18 @@
+REM 📜 Smooth Page Reader & Content Inspector
+REM Title: 📜 Smooth Page Reader
+REM Description: Smoothly scrolls down a page in human-like reading increments.
+REM Tags: utility, reading, inspection
+REM Variables: SCROLL_CHUNK, DELAY_MIN, DELAY_MAX
+
+VAR SCROLL_CHUNK=400
+VAR DELAY_MIN=1200
+VAR DELAY_MAX=2200
+
+LOG Commencing smooth reading sequence
+SCROLL $SCROLL_CHUNK
+RANDOM_DELAY $DELAY_MIN $DELAY_MAX
+SCROLL $SCROLL_CHUNK
+RANDOM_DELAY $DELAY_MIN $DELAY_MAX
+SCROLL $SCROLL_CHUNK
+RANDOM_DELAY $DELAY_MIN $DELAY_MAX
+LOG Page reading pass completed

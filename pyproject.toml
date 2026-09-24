@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azoth-local-agent"
+version = "0.1.0"
+description = "Autonomous Local Agent with Grok-Grade Intelligence, Multi-Engine Routing, and Web Cockpit."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+dependencies = [
+    "openai>=1.55.0",
+    "python-dotenv>=1.0.1",
+    "playwright>=1.40.0",
+    "rich>=13.7.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+    "beautifulsoup4>=4.12.0",
+    "requests>=2.31.0",
+]
+
+[project.scripts]
+azoth-agent = "agent:main"
+azoth-web = "web_ui:main"

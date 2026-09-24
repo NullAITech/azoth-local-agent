@@ -1,0 +1,30 @@
+REM 🔍 Google Search & SERP Scrape Macro
+REM Title: 🔍 Google Search & Scrape
+REM Description: Navigates to Google, types search keyword with human cadence, executes search, waits for results, and captures top search results.
+REM Tags: search, seo, research, scraping
+REM Variables: SEARCH_TERM, OUTPUT_SCREENSHOT
+
+VAR SEARCH_TERM=HVAC contractors Virginia Beach VA
+VAR OUTPUT_SCREENSHOT=google_serp_results.png
+
+LOG Navigating to Google Search
+NAVIGATE https://www.google.com
+WAIT_FOR textarea[name="q"], input[name="q"], textarea.gLFyf 8000
+RANDOM_DELAY 800 1600
+
+LOG Entering search term '$SEARCH_TERM'
+STRING $SEARCH_TERM
+RANDOM_DELAY 600 1200
+ENTER
+
+WAIT_FOR #search, #rso, div[data-async-context], #botstuff 10000
+RANDOM_DELAY 1500 2500
+
+LOG Scrolling organic rankings
+SCROLL 450
+RANDOM_DELAY 1200 2000
+SCROLL 400
+RANDOM_DELAY 1000 1800
+
+SCREENSHOT $OUTPUT_SCREENSHOT
+LOG Google SERP results saved to $OUTPUT_SCREENSHOT

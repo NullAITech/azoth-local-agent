@@ -1,0 +1,22 @@
+REM 🐙 GitHub Repository & Workflow Explorer Macro
+REM Title: 🐙 GitHub Workflow Explorer
+REM Description: Opens trending repositories on GitHub, inspects active repositories, scrolls discussions and captures state.
+REM Tags: developer, github, git, open-source
+REM Variables: REPO_URL, OUTPUT_SCREENSHOT
+
+VAR REPO_URL=https://github.com/trending
+VAR OUTPUT_SCREENSHOT=github_trending.png
+
+LOG Navigating to GitHub: $REPO_URL
+NAVIGATE $REPO_URL
+WAIT_FOR article.Box-row, main, .application-main 10000
+RANDOM_DELAY 1200 2200
+
+LOG Inspecting trending developer repositories
+SCROLL 500
+RANDOM_DELAY 1400 2400
+SCROLL 500
+RANDOM_DELAY 1200 2000
+
+SCREENSHOT $OUTPUT_SCREENSHOT
+LOG GitHub trending state captured to $OUTPUT_SCREENSHOT

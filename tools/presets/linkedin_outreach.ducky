@@ -1,0 +1,22 @@
+REM 💼 LinkedIn Network Outreach & Connection Macro
+REM Title: 💼 LinkedIn Network Outreach
+REM Description: Searches LinkedIn profiles by title/location keyword, inspects search results, scrolls smoothly, and captures candidate leads.
+REM Tags: networking, b2b, outreach, linkedin
+REM Variables: SEARCH_QUERY, OUTPUT_SCREENSHOT
+
+VAR SEARCH_QUERY=Founder Virginia Beach
+VAR OUTPUT_SCREENSHOT=linkedin_results.png
+
+LOG Launching LinkedIn Outreach Workflow for '$SEARCH_QUERY'
+NAVIGATE https://www.linkedin.com/search/results/people/?keywords=$SEARCH_QUERY
+WAIT_FOR .search-results-container, div.search-results, input.search-global-typeahead__input 12000
+RANDOM_DELAY 2000 3500
+
+LOG Scrolling search results for lead evaluation
+SCROLL 350
+RANDOM_DELAY 1200 2200
+SCROLL 350
+RANDOM_DELAY 1500 2500
+
+SCREENSHOT $OUTPUT_SCREENSHOT
+LOG LinkedIn search results captured to $OUTPUT_SCREENSHOT

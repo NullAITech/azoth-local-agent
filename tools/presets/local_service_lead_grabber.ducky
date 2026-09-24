@@ -1,0 +1,31 @@
+REM 📍 Local Service Lead Grabber Macro
+REM Title: 📍 Local Service Lead Grabber
+REM Description: Queries Google Maps / Places for local service businesses (contractors, plumbers, roofers), scrolls through lead feed, and captures local business directory.
+REM Tags: leads, b2b, sales, local-business, cold-outreach
+REM Variables: NICHE, LOCATION, OUTPUT_SCREENSHOT
+
+VAR NICHE=roofing contractors
+VAR LOCATION=Virginia Beach VA
+VAR OUTPUT_SCREENSHOT=local_leads_results.png
+
+LOG Opening Google Maps for Local Lead Discovery
+NAVIGATE https://www.google.com/maps
+WAIT_FOR #searchboxinput, input#searchboxinput, input[name="q"] 10000
+RANDOM_DELAY 1000 2000
+
+LOG Searching for '$NICHE in $LOCATION'
+STRING $NICHE in $LOCATION
+RANDOM_DELAY 700 1300
+ENTER
+
+WAIT_FOR div[role="feed"], div[aria-label*="Results"], div[role="main"] 12000
+RANDOM_DELAY 2500 4000
+
+LOG Scrolling business lead feed
+SCROLL 500
+RANDOM_DELAY 1500 2500
+SCROLL 500
+RANDOM_DELAY 1500 2500
+
+SCREENSHOT $OUTPUT_SCREENSHOT
+LOG Local service leads captured to $OUTPUT_SCREENSHOT

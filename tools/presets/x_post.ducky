@@ -1,0 +1,24 @@
+REM 🦆 X / Twitter Auto-Post Macro
+REM Title: 🦆 X / Twitter Auto-Post
+REM Description: Navigates to X compose modal, types custom post content with human jitter, takes a compose screenshot, and submits via Ctrl+Enter.
+REM Tags: social, twitter, marketing, x
+REM Variables: POST_TEXT, OUTPUT_SCREENSHOT
+
+VAR POST_TEXT=Hello from a-bot with native DuckyScript automation! 🦆✨ Zero-detection browser workflows are live.
+VAR OUTPUT_SCREENSHOT=x_compose.png
+
+LOG Starting X / Twitter Auto-Post Workflow
+NAVIGATE https://x.com/compose/post
+WAIT_FOR [data-testid="tweetTextarea_0"], div[role="textbox"] 10000
+RANDOM_DELAY 1500 2500
+
+STRING $POST_TEXT
+RANDOM_DELAY 1000 1800
+
+SCREENSHOT $OUTPUT_SCREENSHOT
+RANDOM_DELAY 800 1400
+
+CTRL+ENTER
+DELAY 3000
+SCREENSHOT x_posted_final.png
+LOG X / Twitter Post submitted successfully

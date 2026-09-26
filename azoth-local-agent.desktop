@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=aZoth Local Agent
+GenericName=Autonomous AI Agent & Multi-Engine Intelligence Studio
+Comment=Local-first Autonomous Coding & Research Agent, Sandboxed Browser, VM Management & Grok-Grade Cockpit
+Exec=/usr/local/bin/azoth desktop
+Icon=/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/azoth-local-agent/assets/icon.png
+Terminal=false
+Categories=Development;System;Utility;ArtificialIntelligence;
+StartupNotify=true
+Actions=CLI;Web;
+
+[Desktop Action CLI]
+Name=Open aZoth CLI
+Exec=x-terminal-emulator -e "/usr/local/bin/azoth --help"
+
+[Desktop Action Web]
+Name=Open Cockpit Web UI (Port 8790)
+Exec=/usr/local/bin/azoth web

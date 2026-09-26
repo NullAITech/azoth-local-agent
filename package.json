@@ -1,0 +1,22 @@
+{
+  "name": "azoth-local-agent",
+  "version": "1.0.0",
+  "description": "Autonomous Local AI Agent Workstation with Sandboxed Browser, VM Management, and Grok-Grade Multi-Engine Intelligence",
+  "main": "electron/main.cjs",
+  "bin": {
+    "azoth": "./bin/azoth.js",
+    "azoth-agent": "./bin/azoth.js"
+  },
+  "scripts": {
+    "start": "electron .",
+    "desktop": "electron .",
+    "web": "node bin/azoth.js web",
+    "cli": "node bin/azoth.js",
+    "test": "pytest tests/"
+  },
+  "author": "Zoth Core Intelligence",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^34.5.8"
+  }
+}

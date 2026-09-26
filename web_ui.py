@@ -193,7 +193,7 @@ class BrowserTakeoverRequest(BaseModel):
 
 
 HTML_TEMPLATE = r"""<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3842,9 +3842,22 @@ def vm_install_endpoint(req: VMInstallRequest):
     return guest_os.install_package(package=req.package)
 
 
+@app.get("/health")
+@app.get("/api/health")
+def health_check():
+    return {"status": "healthy", "service": "azoth-local-agent", "sovereign": True}
+
+
 def main():
+    import argparse
     import uvicorn
-    uvicorn.run("web_ui:app", host="0.0.0.0", port=8000, reload=True)
+    parser = argparse.ArgumentParser(description="Azoth Local Agent Web UI Cockpit")
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8790)), help="Port to bind to (default: 8790)")
+    parser.add_argument("--host", default="0.0.0.0", help="Host interface (default: 0.0.0.0)")
+    parser.add_argument("--reload", action="store_true", default=False, help="Enable auto-reload")
+    args, _ = parser.parse_known_args()
+    print(f"Launching aZoth Web Cockpit at http://127.0.0.1:{args.port} (listening on {args.host})...")
+    uvicorn.run("web_ui:app", host=args.host, port=args.port, reload=args.reload)
 
 
 if __name__ == "__main__":

@@ -407,6 +407,7 @@ def main() -> int:
     parser.add_argument("--model", type=str, help="Override model name")
     parser.add_argument("--mode", type=str, default="regular", help="Agent mode: regular, fun, think, coder")
     parser.add_argument("--web", action="store_true", help="Launch web UI cockpit")
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8790)), help="Port for web cockpit (default: 8790)")
     parser.add_argument("--mcp", action="store_true", help="Run Model Context Protocol (MCP) JSON-RPC stdio server")
     parser.add_argument("--query", "-q", type=str, help="Execute single query non-interactively and exit")
     parser.add_argument("--json", action="store_true", help="Format query response as JSON")
@@ -420,8 +421,9 @@ def main() -> int:
         try:
             import uvicorn
             from web_ui import app
-            print("Launching aZoth Web Cockpit at http://127.0.0.1:8790 (listening on 0.0.0.0)...")
-            uvicorn.run("web_ui:app", host="0.0.0.0", port=8790, reload=False)
+            port = args.port or int(os.environ.get("PORT", 8790))
+            print(f"Launching aZoth Web Cockpit at http://127.0.0.1:{port} (listening on 0.0.0.0)...")
+            uvicorn.run("web_ui:app", host="0.0.0.0", port=port, reload=False)
             return 0
         except Exception as e:
             print(f"Error starting web UI: {e}")

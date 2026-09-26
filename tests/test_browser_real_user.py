@@ -169,13 +169,21 @@ def test_guest_os_browser_cli_bridge():
     cli_path = ROOT / "sandbox" / "workspace" / "azoth-browser"
     assert cli_path.exists(), f"CLI file missing at {cli_path}"
     
-    res = subprocess.run([sys.executable, str(cli_path), "status"], capture_output=True, text=True, timeout=10)
+    try:
+        from tools import browser as _b_mod
+        if _b_mod._browser_instance and _b_mod._browser_instance.is_context_alive():
+            _b_mod._browser_instance.close()
+    except Exception:
+        pass
+
+    res = subprocess.run([sys.executable, str(cli_path), "status"], capture_output=True, text=True, timeout=25)
     try:
         host_data = json.loads(res.stdout)
         passed_host_cli = (res.returncode == 0 and ("tabs" in host_data or "url" in host_data or "ok" in host_data))
     except Exception:
         passed_host_cli = False
     log_test("Host CLI Bridge (azoth-browser status)", passed_host_cli, f"Output parsed JSON: {passed_host_cli}")
+    assert passed_host_cli, f"Host CLI bridge failed: code={res.returncode}, stdout={res.stdout}, stderr={res.stderr}"
 
     # 2. Container execution
     container_active = guest_os.is_running()

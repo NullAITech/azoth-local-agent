@@ -12,3 +12,6 @@ __pycache__/
 .pytest_cache/
 target/
 coverage/
+sandbox/browser_profile/
+sandbox/workspace/*.png
+sandbox/workspace/test_*.json

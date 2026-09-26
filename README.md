@@ -156,20 +156,86 @@ azoth-local-agent/
 
 ---
 
+## 🔌 Model Context Protocol (MCP) Integration
+
+`azoth-local-agent` ships with a native **Model Context Protocol (MCP)** JSON-RPC 2.0 stdio server. This allows Claude Desktop, Cursor, Hermes Agent, OpenCode, and AGY to connect directly and invoke AZOTH's sandboxed browser, workspace shell, Python interpreter, X intelligence, and Linux VM guest operations without cloud dependencies.
+
+### Claude Desktop / Cursor Configuration
+
+Add to your `claude_desktop_config.json` or Cursor MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "azoth": {
+      "command": "python3",
+      "args": [
+        "/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/azoth-local-agent/agent.py",
+        "--mcp"
+      ]
+    }
+  }
+}
+```
+
+### Exposed MCP Tools
+
+- `azoth_agent_query`: Autonomous Archon meta-tool that executes end-to-end tasks with local/cloud engines.
+- `azoth_duckyscript`: Execute human-like macro payloads against browser or desktop.
+- `azoth_browser_navigate`: Navigate authenticated persistent Chrome sandbox.
+- `azoth_browser_extract`: Extract live text content and interactive inputs from webpage.
+- `azoth_browser_screenshot`: Capture full/viewport screenshots.
+- `azoth_python_repl`: Safe Python execution in isolated workspace.
+- `azoth_shell`: Execute shell commands inside `sandbox/workspace/`.
+- `azoth_deep_search`: Multi-source parallel search with verified citations.
+- `azoth_x_search` / `azoth_x_trends`: Live X/Twitter intelligence and trend scouting.
+- `azoth_vm_exec` / `azoth_vm_status`: Linux Guest OS container/VM inspection and execution.
+
+---
+
+## 🤖 Headless & AI Agent Scripting
+
+Execute single queries directly from the command line or bash scripts:
+
+```bash
+# Direct task resolution with local Ollama
+python3 agent.py --query "Summarize the files in sandbox/workspace"
+
+# Machine-readable JSON output for agent pipelines
+python3 agent.py --query "Check system status" --json
+
+# Run with a specific engine
+python3 agent.py --engine hermes --query "Refactor tests/test_mcp.py"
+```
+
+---
+
 ## 🧪 Testing
 
 Run the test suite:
 
 ```bash
+# Run MCP protocol tests
+python3 -m pytest tests/test_mcp.py -v
+
 # Run all Grok intelligence tests
 python3 -m pytest tests/test_grok_intelligence.py -v
 
-# Run full agent test suite
-python3 -m pytest tests/ -v
+# Run full core test suite (68 tests)
+python3 -m pytest tests/test_mcp.py tests/test_duckyscript.py tests/test_grok_intelligence.py tests/test_live_routing.py tests/test_manager.py tests/test_vm_os.py -v
 ```
+
+---
+
+## 🛡️ Sovereign Invariants
+
+- **Zero-Egress by Default**: Operates completely local-first with Ollama or local container guest OS. No telemetry, no third-party phone-home.
+- **Sandboxed Execution**: Shell commands and Python interpreter operate in strictly constrained paths (`sandbox/workspace/`).
+- **Standardized RPC**: Uses official JSON-RPC 2.0 specs over standard stdio for universal AI interoperability.
 
 ---
 
 ## License
 
 MIT
+

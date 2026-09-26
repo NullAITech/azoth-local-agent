@@ -407,7 +407,14 @@ def main() -> int:
     parser.add_argument("--model", type=str, help="Override model name")
     parser.add_argument("--mode", type=str, default="regular", help="Agent mode: regular, fun, think, coder")
     parser.add_argument("--web", action="store_true", help="Launch web UI cockpit")
+    parser.add_argument("--mcp", action="store_true", help="Run Model Context Protocol (MCP) JSON-RPC stdio server")
+    parser.add_argument("--query", "-q", type=str, help="Execute single query non-interactively and exit")
+    parser.add_argument("--json", action="store_true", help="Format query response as JSON")
     args = parser.parse_args()
+
+    if args.mcp:
+        from mcp_server import run_mcp_server
+        return run_mcp_server()
 
     if args.web:
         try:
@@ -422,6 +429,37 @@ def main() -> int:
 
     engine = args.engine
     active_mode = args.mode or EnvConfigManager.get("AGENT_MODE", DEFAULT_MODE)
+
+    if args.query:
+        if engine in ("hermes", "agy", "codex", "grok_cli", "gemini", "claude"):
+            res = execute_cli_agent(engine_id=engine, prompt=args.query, auto_fallback=True)
+            if args.json:
+                print(json.dumps(res, indent=2, ensure_ascii=False))
+            else:
+                out = res.get("output", res.get("error", ""))
+                print(out)
+            return 0 if res.get("ok") else 1
+        else:
+            client, default_model, _ = make_client()
+            model = args.model or default_model
+            msgs = [
+                {"role": "system", "content": build_system_prompt(active_mode)},
+                {"role": "user", "content": args.query}
+            ]
+            try:
+                reply = agent_step(client, model, msgs)
+                if args.json:
+                    print(json.dumps({"ok": True, "output": reply, "engine": engine, "model": model}, indent=2, ensure_ascii=False))
+                else:
+                    print(reply)
+                return 0
+            except Exception as e:
+                if args.json:
+                    print(json.dumps({"ok": False, "error": str(e), "engine": engine}, indent=2, ensure_ascii=False))
+                else:
+                    print(f"Error: {e}", file=sys.stderr)
+                return 1
+
     client, default_model, base_url = make_client()
     model = args.model or default_model
     render_banner(engine, model, active_mode)

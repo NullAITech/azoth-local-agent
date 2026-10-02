@@ -281,14 +281,25 @@ def cmd_x(query: str):
 
 
 def cmd_py(code: str):
-    """Run sandbox Python code directly from CLI."""
+    """Run sandbox Python code directly from CLI with persistent session support."""
     if not code.strip():
-        print("Usage: /py [python code or one-liner]")
+        print("Usage: /py [python code or one-liner] (or '/py reset')")
         return
-    res = run_python(code=code, timeout_sec=20)
+    if code.strip() == "reset":
+        from tools.code_runner import reset_session
+        reset_session("cli_session")
+        if HAS_RICH:
+            console.print("[green]Stateful Python REPL session reset.[/green]")
+        else:
+            print("Stateful Python REPL session reset.")
+        return
+    res = run_python(code=code, timeout_sec=20, session_id="cli_session")
     if HAS_RICH:
         style = "green" if res.get("ok") else "red"
-        console.print(Panel(res.get("output", "").strip() or "(no output)", title=f"🐍 Python Execution ({res.get('elapsed_seconds')}s)", border_style=style))
+        extra = ""
+        if res.get("artifacts"):
+            extra = f"\n[dim]Artifacts: {', '.join(a['filename'] for a in res['artifacts'])}[/dim]"
+        console.print(Panel((res.get("output", "").strip() or "(no output)") + extra, title=f"🐍 Python Execution ({res.get('elapsed_seconds')}s)", border_style=style))
     else:
         print(f"Python ({res.get('elapsed_seconds')}s):\n{res.get('output')}")
 
@@ -411,6 +422,7 @@ def main() -> int:
     parser.add_argument("--mcp", action="store_true", help="Run Model Context Protocol (MCP) JSON-RPC stdio server")
     parser.add_argument("--query", "-q", type=str, help="Execute single query non-interactively and exit")
     parser.add_argument("--json", action="store_true", help="Format query response as JSON")
+    parser.add_argument("--timeout", type=int, default=int(os.environ.get("CLI_AGENT_TIMEOUT", 1800)), help="Timeout in seconds for agent execution (default: 1800)")
     args = parser.parse_args()
 
     if args.mcp:
@@ -434,7 +446,7 @@ def main() -> int:
 
     if args.query:
         if engine in ("hermes", "agy", "codex", "grok_cli", "gemini", "claude"):
-            res = execute_cli_agent(engine_id=engine, prompt=args.query, auto_fallback=True)
+            res = execute_cli_agent(engine_id=engine, prompt=args.query, timeout=args.timeout, auto_fallback=True)
             if args.json:
                 print(json.dumps(res, indent=2, ensure_ascii=False))
             else:
@@ -621,6 +633,7 @@ def main() -> int:
             res = execute_cli_agent(
                 engine_id=engine,
                 prompt=user,
+                timeout=args.timeout,
                 on_chunk=print_chunk,
                 auto_fallback=True,
             )

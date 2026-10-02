@@ -254,9 +254,10 @@ class SandboxBrowser:
                     "--force-color-profile=srgb",
                 ]
 
+                headless_mode = os.getenv("BROWSER_HEADLESS", "0").lower() in ("1", "true", "yes")
                 kwargs: dict[str, Any] = {
                     "user_data_dir": str(BROWSER_PROFILE_DIR),
-                    "headless": False,  # ALWAYS headed
+                    "headless": headless_mode,
                     "args": launch_args,
                     "ignore_default_args": ["--enable-automation"],
                     "viewport": {"width": 1280, "height": 800},

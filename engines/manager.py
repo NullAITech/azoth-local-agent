@@ -38,6 +38,8 @@ ENV_FILE = ROOT / ".env"
 # Load environment on import
 load_dotenv(ENV_FILE)
 
+DEFAULT_CLI_TIMEOUT = int(os.getenv("CLI_AGENT_TIMEOUT", "1800"))
+
 
 # =====================================================================
 # 1. PERSISTENT ENVIRONMENT & ENGINE CONFIG MANAGER
@@ -531,7 +533,7 @@ class StreamChunk:
 def execute_cli_agent_stream(
     engine_id: str,
     prompt: str,
-    timeout: int = 120,
+    timeout: Optional[int] = None,
     workspace_dir: Optional[Path] = None,
     extra_env: Optional[dict[str, str]] = None,
     model: Optional[str] = None,
@@ -544,6 +546,7 @@ def execute_cli_agent_stream(
     Returns:
         Summary dict containing overall execution result and returncode.
     """
+    effective_timeout = timeout if timeout is not None else DEFAULT_CLI_TIMEOUT
     ws = workspace_dir or WORKSPACE_DIR
     ws.mkdir(parents=True, exist_ok=True)
 
@@ -607,12 +610,12 @@ def execute_cli_agent_stream(
                 accumulated_lines.append(line)
                 yield StreamChunk(engine=engine_id, text=line, is_stderr=False, is_final=False)
 
-                if time.time() - start_time > timeout:
+                if time.time() - start_time > effective_timeout:
                     timed_out = True
                     proc.kill()
                     break
 
-        proc.wait(timeout=max(1, timeout - int(time.time() - start_time)))
+        proc.wait(timeout=max(1, effective_timeout - int(time.time() - start_time)))
         returncode = proc.returncode if not timed_out else 124
 
     except subprocess.TimeoutExpired:
@@ -629,7 +632,7 @@ def execute_cli_agent_stream(
     full_output = "".join(accumulated_lines).strip()
 
     if timed_out:
-        timeout_msg = f"\n[Timeout] {engine_id} execution exceeded {timeout}s limit."
+        timeout_msg = f"\n[Timeout] {engine_id} execution exceeded {effective_timeout}s limit."
         yield StreamChunk(
             engine=engine_id,
             text=timeout_msg,
@@ -640,7 +643,7 @@ def execute_cli_agent_stream(
         return {
             "ok": False,
             "engine": engine_id,
-            "error": f"Execution timed out after {timeout} seconds.",
+            "error": f"Execution timed out after {effective_timeout} seconds.",
             "output": full_output,
             "returncode": 124,
         }
@@ -691,7 +694,7 @@ def get_fallback_candidates(engine_id: str) -> list[str]:
 def execute_cli_agent(
     engine_id: str,
     prompt: str,
-    timeout: int = 120,
+    timeout: Optional[int] = None,
     workspace_dir: Optional[Path] = None,
     extra_env: Optional[dict[str, str]] = None,
     on_chunk: Optional[Callable[[str], None]] = None,
@@ -703,17 +706,18 @@ def execute_cli_agent(
     Args:
         engine_id: Primary engine to run (e.g. 'hermes', 'agy', 'codex', 'grok_cli', 'gemini')
         prompt: Task prompt to delegate
-        timeout: Execution timeout in seconds
+        timeout: Execution timeout in seconds (default: 1800s / 30m)
         workspace_dir: Working directory for execution
         extra_env: Environment variables to inject
         on_chunk: Optional callback invoked for each line of output
         auto_fallback: Whether to attempt fallback if primary engine fails
         fallback_chain: Optional custom fallback candidates list
     """
+    effective_timeout = timeout if timeout is not None else DEFAULT_CLI_TIMEOUT
     stream = execute_cli_agent_stream(
         engine_id=engine_id,
         prompt=prompt,
-        timeout=timeout,
+        timeout=effective_timeout,
         workspace_dir=workspace_dir,
         extra_env=extra_env,
     )
@@ -748,7 +752,7 @@ def execute_cli_agent(
         fb_stream = execute_cli_agent_stream(
             engine_id=fb_engine,
             prompt=prompt,
-            timeout=timeout,
+            timeout=effective_timeout,
             workspace_dir=workspace_dir,
             extra_env=extra_env,
         )

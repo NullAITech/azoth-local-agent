@@ -34,7 +34,7 @@ from pydantic import BaseModel
 from openai import OpenAI
 
 from tools.browser import get_browser
-from tools.code_runner import run_python
+from tools.code_runner import close_all_sessions, reset_session, run_python
 from tools.deep_search import deep_search
 from tools.definitions import AGENT_TOOLS, execute_tool
 from tools.duckyscript import DUCKY_PRESETS, run_duckyscript
@@ -146,6 +146,11 @@ class XSearchRequest(BaseModel):
 class PythonRunRequest(BaseModel):
     code: str
     timeout_sec: Optional[int] = 20
+    session_id: Optional[str] = None
+
+
+class PythonResetRequest(BaseModel):
+    session_id: Optional[str] = None
 
 
 class VMExecRequest(BaseModel):
@@ -3794,7 +3799,17 @@ def x_trends_endpoint(topic_focus: Optional[str] = "tech"):
 
 @app.post("/api/python/run")
 def python_run_endpoint(req: PythonRunRequest):
-    return run_python(code=req.code, timeout_sec=req.timeout_sec or 20)
+    return run_python(code=req.code, timeout_sec=req.timeout_sec or 20, session_id=req.session_id)
+
+
+@app.post("/api/python/reset")
+def python_reset_endpoint(req: Optional[PythonResetRequest] = None):
+    sid = req.session_id if req else None
+    if sid:
+        reset_session(sid)
+    else:
+        close_all_sessions()
+    return {"ok": True, "session_id": sid}
 
 
 @app.get("/api/memory")

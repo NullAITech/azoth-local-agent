@@ -1,8 +1,10 @@
-"""Pytest configuration and shared fixtures."""
-
+import os
 import sys
 from pathlib import Path
 import pytest
+
+# Ensure headless browser during automated test suites
+os.environ.setdefault("BROWSER_HEADLESS", "1")
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:

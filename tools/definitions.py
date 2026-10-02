@@ -470,12 +470,13 @@ AGENT_TOOLS = [
         "type": "function",
         "function": {
             "name": "python_repl",
-            "description": "Execute Python code inside the sandbox workspace and capture stdout, stderr, and execution duration (Grok Code Interpreter style).",
+            "description": "Execute Python code inside the sandbox workspace and capture stdout, stderr, execution duration, trailing expressions, and matplotlib artifacts (Grok Code Interpreter style). Supports persistent stateful REPL sessions with session_id.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "code": {"type": "string", "description": "Complete Python script to run."},
                     "timeout_sec": {"type": "integer", "description": "Max runtime in seconds (default 20)."},
+                    "session_id": {"type": "string", "description": "Optional session ID for persistent stateful execution across calls."},
                 },
                 "required": ["code"],
             },
@@ -652,6 +653,7 @@ def execute_tool(name: str, args: dict[str, Any]) -> dict[str, Any]:
         return run_python(
             code=args.get("code", ""),
             timeout_sec=args.get("timeout_sec", 20),
+            session_id=args.get("session_id"),
         )
     elif name == "vm_exec":
         return guest_os.run_command(

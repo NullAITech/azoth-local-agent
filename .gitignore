@@ -18,3 +18,5 @@ sandbox/browser_profile/
 sandbox/workspace/*.png
 sandbox/workspace/test_*.json
 sandbox/workspace/artifacts/
+
+sandbox/*.png

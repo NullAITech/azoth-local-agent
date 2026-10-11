@@ -434,8 +434,8 @@ def main() -> int:
             import uvicorn
             from web_ui import app
             port = args.port or int(os.environ.get("PORT", 8790))
-            print(f"Launching aZoth Web Cockpit at http://127.0.0.1:{port} (listening on 0.0.0.0)...")
-            uvicorn.run("web_ui:app", host="0.0.0.0", port=port, reload=False)
+            print(f"Launching aZoth Web Cockpit at http://127.0.0.1:{port} (listening on 127.0.0.1; set ZOTH_BIND_HOST to expose)...")
+            uvicorn.run("web_ui:app", host=os.environ.get("ZOTH_BIND_HOST", "127.0.0.1"), port=port, reload=False)
             return 0
         except Exception as e:
             print(f"Error starting web UI: {e}")

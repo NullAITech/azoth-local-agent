@@ -3868,7 +3868,7 @@ def main():
     import uvicorn
     parser = argparse.ArgumentParser(description="Azoth Local Agent Web UI Cockpit")
     parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8790)), help="Port to bind to (default: 8790)")
-    parser.add_argument("--host", default="0.0.0.0", help="Host interface (default: 0.0.0.0)")
+    parser.add_argument("--host", default="127.0.0.1", help="Host interface (default: 127.0.0.1; use 0.0.0.0 only on trusted networks)")
     parser.add_argument("--reload", action="store_true", default=False, help="Enable auto-reload")
     args, _ = parser.parse_known_args()
     print(f"Launching aZoth Web Cockpit at http://127.0.0.1:{args.port} (listening on {args.host})...")

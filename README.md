@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="assets/hero-banner.svg" alt="AZOTH Local Archon Agent — Sovereign Architecture Banner" width="100%" />
+</div>
+
+<br />
+
 # aZoth-local v2.5 — Autonomous Local Agent (Grok-Grade Intelligence)
 
 An **autonomous local AI agent** engineered with **Grok-grade intelligence**: real-time X (Twitter) intelligence, multi-source DeepSearch with verifiable citations, dynamic Grok persona modes, chain-of-thought (`<think>`) reasoning, sandbox Python code interpreter, and persistent **Sandboxed Browser** ("VM-ish vibes" with zero VM overhead).

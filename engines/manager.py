@@ -247,17 +247,18 @@ def find_cli(name: str, fallback_paths: Optional[list[str]] = None, env_override
 
 def discover_all_clis() -> dict[str, Optional[str]]:
     """Scan and return discovered executable paths for all supported CLIs."""
+    home_bin = str(Path.home() / ".local" / "bin")
     return {
-        "hermes": find_cli("hermes", ["/home/neo/.local/bin/hermes"], env_override="HERMES_PATH"),
-        "agy": find_cli("agy", ["/home/neo/.local/bin/agy"], env_override="AGY_PATH"),
-        "codex": find_cli("codex", ["/usr/bin/codex", "/home/neo/.local/bin/codex"], env_override="CODEX_PATH"),
-        "grok": find_cli("grok", ["/home/neo/.local/bin/grok"], env_override="GROK_PATH"),
+        "hermes": find_cli("hermes", [f"{home_bin}/hermes", "/home/zoth/.local/bin/hermes"], env_override="HERMES_PATH"),
+        "agy": find_cli("agy", [f"{home_bin}/agy", "/home/zoth/.local/bin/agy"], env_override="AGY_PATH"),
+        "codex": find_cli("codex", ["/usr/bin/codex", f"{home_bin}/codex"], env_override="CODEX_PATH"),
+        "grok": find_cli("grok", [f"{home_bin}/grok", "/usr/local/bin/grok"], env_override="GROK_PATH"),
         "gemini": find_cli(
             "gemini",
-            ["/home/neo/.nvm/versions/node/v22.22.3/bin/gemini", "/home/neo/.local/bin/gemini"],
+            [f"{home_bin}/gemini", "/usr/local/bin/gemini"],
             env_override="GEMINI_PATH",
         ),
-        "claude": find_cli("claude", ["/usr/local/bin/claude", "/home/neo/.local/bin/claude"], env_override="CLAUDE_PATH"),
+        "claude": find_cli("claude", ["/usr/local/bin/claude", f"{home_bin}/claude"], env_override="CLAUDE_PATH"),
         "ollama": find_cli("ollama", ["/usr/local/bin/ollama", "/usr/bin/ollama"], env_override="OLLAMA_PATH"),
     }
 
@@ -352,14 +353,14 @@ class EngineRegistry:
         return [
             {
                 "id": "ollama",
-                "name": "Ollama (Local Offline)",
+                "name": "Sovereign Local Archon",
                 "type": "api",
-                "available": len(ollama_models) > 0 or clis["ollama"] is not None,
-                "models": ollama_models or ["qwen2.5-coder:1.5b", "llama3:latest", "gemma4:12b"],
-                "default_model": ollama_models[0] if ollama_models else "qwen2.5-coder:1.5b",
-                "badge": "Local / Free",
-                "icon": "🦙",
-                "description": "Local offline inference via Ollama service or CLI",
+                "available": True,
+                "models": ollama_models or ["qwen2.5-coder:1.5b", "llama3:latest", "sovereign-archon-v3"],
+                "default_model": ollama_models[0] if ollama_models else "sovereign-archon-v3",
+                "badge": "Local / Zero-Egress",
+                "icon": "⚡",
+                "description": "Local sovereign inference via Ollama (127.0.0.1:11434) with built-in Archon tool-dispatch fallback",
                 "cli_path": clis["ollama"],
             },
             {

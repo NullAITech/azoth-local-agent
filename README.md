@@ -216,6 +216,40 @@ python3 agent.py --engine hermes --query "Refactor tests/test_mcp.py"
 
 ---
 
+## 💻 ZothOS CLI & MCP Commands
+
+`azoth-local-agent` is integrated directly into **ZothOS** as a system-wide executable (`azoth` and `azoth-local-agent` in `/usr/local/bin/` and `~/.local/bin/`).
+
+```bash
+# Check version and engine status
+azoth --version
+azoth status
+
+# List available Grok persona modes
+azoth modes
+
+# Execute an autonomous directive with JSON output
+azoth -q "Run a Python benchmark and test workspace files" --json
+
+# Run with a specific engine or persona mode
+azoth --engine hermes --mode coder -q "Refactor server endpoints"
+azoth --mode think -q "DeepSearch latest sovereign local agent breakthroughs"
+
+# Launch the FastAPI Web Cockpit Workstation (:8136)
+azoth web
+```
+
+---
+
+## ☕ 100% Free & Open-Access Architecture (Zero Paywalls)
+
+All tools, scripts, sandboxes, and export capabilities are **100% free and unlocked by default**.
+
+- **Buy Us a Coffee (Stripe)**: [https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- **Solana Wallet Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` (`solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
+
+---
+
 ## 🧪 Testing
 
 Run the test suite:

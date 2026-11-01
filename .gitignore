@@ -20,3 +20,12 @@ sandbox/workspace/test_*.json
 sandbox/workspace/artifacts/
 
 sandbox/*.png
+
+.venv*/
+*.pth
+*.onnx
+data/minds/spool.jsonl
+release-artifacts/
+build/*.iso*
+build/live_workspace/
+build/release-*/

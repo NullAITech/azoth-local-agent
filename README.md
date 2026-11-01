@@ -8,7 +8,7 @@
 
 An **autonomous local AI agent** engineered with **Grok-grade intelligence**: real-time X (Twitter) intelligence, multi-source DeepSearch with verifiable citations, dynamic Grok persona modes, chain-of-thought (`<think>`) reasoning, sandbox Python code interpreter, and persistent **Sandboxed Browser** ("VM-ish vibes" with zero VM overhead).
 
-Built for Neal Frazier (Neal Frazier Tech, Virginia Beach) to run locally with **Ollama** (offline, private, free) or cloud models via **xAI Grok**, **Hermes**, **AGY**, **Codex**, **Claude**, or **Gemini**.
+Built for 1nc0gn30 (1nc0gn30 • NullAI, Virginia Beach) to run locally with **Ollama** (offline, private, free) or cloud models via **xAI Grok**, **Hermes**, **AGY**, **Codex**, **Claude**, or **Gemini**.
 
 ---
 
@@ -83,7 +83,7 @@ python3 agent.py
 cd azoth-local-agent
 python3 agent.py --web
 ```
-Open **`http://127.0.0.1:8790`** in your browser.
+Open **`http://127.0.0.1:8136`** in your browser.
 
 ### 3. Run with Grok Mode or Overrides
 

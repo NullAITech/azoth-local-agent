@@ -517,7 +517,7 @@ def agent_step(client: OpenAI, model: str, messages: list[dict], max_turns: int 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="aZoth-local — Autonomous Local Archon Agent & Multi-Engine Router")
-    parser.add_argument("subcommand", nargs="?", help="Optional subcommand: status, engines, modes, web, mcp")
+    parser.add_argument("subcommand", nargs="?", help="Optional subcommand: status, engines, modes, tools, ducky, py, web, mcp")
     parser.add_argument("--engine", type=str, default="ollama", help="Active engine (ollama, hermes, agy, codex, grok_cli, xai, etc.)")
     parser.add_argument("--model", type=str, help="Override model name")
     parser.add_argument("--mode", type=str, default="regular", help="Agent mode: regular, fun, think, coder")
@@ -551,6 +551,41 @@ def main() -> int:
             print(json.dumps({"modes": list_modes(), "active": args.mode}, indent=2))
         else:
             cmd_modes(args.mode)
+        return 0
+
+    if args.subcommand == "tools":
+        if args.json:
+            print(json.dumps({"count": len(AGENT_TOOLS), "tools": [t["function"]["name"] for t in AGENT_TOOLS]}, indent=2))
+        else:
+            print(f"✦ Registered aZoth Archon Tools ({len(AGENT_TOOLS)} active):")
+            for idx, t in enumerate(AGENT_TOOLS, 1):
+                fn = t.get("function", {})
+                print(f"  {idx:02d}. {fn.get('name', ''):28s} — {fn.get('description', '')[:78]}")
+        return 0
+
+    if args.subcommand == "ducky":
+        from tools.duckyscript import DUCKY_PRESETS
+        if args.json:
+            print(json.dumps({"presets": DUCKY_PRESETS}, indent=2))
+        else:
+            print(f"🦆 aZoth DuckyScript Automation Presets ({len(DUCKY_PRESETS)} available):")
+            items = DUCKY_PRESETS.values() if isinstance(DUCKY_PRESETS, dict) else DUCKY_PRESETS
+            for pdata in items:
+                pid = pdata.get("id", "")
+                print(f"  • {pid:18s} : {pdata.get('name', pid)} — {pdata.get('description', '')}")
+        return 0
+
+    if args.subcommand == "py":
+        code = args.query or "import sys, platform; print(f'Python {sys.version.split()[0]} on {platform.platform()}'); result = sum(i*i for i in range(1, 101)); print('Sum of squares (1..100):', result)"
+        res = run_python(code=code, timeout_sec=15)
+        if args.json:
+            print(json.dumps(res, indent=2))
+        else:
+            print(f"🐍 Sandbox Python Execution (returncode={res.get('returncode', 0)}):")
+            if res.get("stdout"):
+                print(res["stdout"].rstrip())
+            if res.get("result") is not None:
+                print(f"Result: {res['result']}")
         return 0
 
     if args.mcp or args.subcommand == "mcp":

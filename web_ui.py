@@ -2915,17 +2915,38 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       };
     }
 
+    async function execVmFallback(cmd) {
+      const clean = (cmd || '').trim();
+      if (!clean) return;
+      updateTerminalStatus(true, 'Guest OS: Running');
+      if (term) {
+        term.write(`\r\n\x1b[32mazoth@sandbox\x1b[0m:\x1b[34m~/workspace\x1b[0m$ ${clean}\r\n`);
+      }
+      try {
+        const res = await fetch('/api/vm/exec', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ command: clean, timeout: 15 })
+        });
+        const data = await res.json();
+        if (term) {
+          const out = (data.stdout || '') + (data.stderr || '');
+          if (out) {
+            term.write(out.replace(/\r?\n/g, '\r\n'));
+          }
+          term.write(`\x1b[32mazoth@sandbox\x1b[0m:\x1b[34m~/workspace\x1b[0m$ `);
+        }
+      } catch (e) {
+        if (term) term.write(`\x1b[31mError: ${e.message}\x1b[0m\r\n`);
+      }
+    }
+
     function sendTerminalCmd(cmd) {
       if (termSocket && termSocket.readyState === WebSocket.OPEN) {
         termSocket.send(cmd);
         if (term) term.focus();
       } else {
-        reconnectTerminal();
-        setTimeout(() => {
-          if (termSocket && termSocket.readyState === WebSocket.OPEN) {
-            termSocket.send(cmd);
-          }
-        }, 600);
+        execVmFallback(cmd);
       }
     }
 
